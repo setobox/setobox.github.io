@@ -53,10 +53,12 @@
     
     
     
-    <category term="MySQL" scheme="http://setobox.github.io/categories/MySQL/"/>
+    <category term="数据库" scheme="http://setobox.github.io/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
     
     
     <category term="MySQL" scheme="http://setobox.github.io/tags/MySQL/"/>
+    
+    <category term="数据库" scheme="http://setobox.github.io/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
     
   </entry>
   
@@ -110,7 +112,7 @@
     
     <category term="Python" scheme="http://setobox.github.io/tags/Python/"/>
     
-    <category term="GUI绘制" scheme="http://setobox.github.io/tags/GUI%E7%BB%98%E5%88%B6/"/>
+    <category term="GUI" scheme="http://setobox.github.io/tags/GUI/"/>
     
   </entry>
   
