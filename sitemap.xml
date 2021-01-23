@@ -102,13 +102,6 @@
   </url>
   
   <url>
-    <loc>http://setobox.github.io/tags/%E6%B5%8B%E8%AF%95/</loc>
-    <lastmod>2021-01-23</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>http://setobox.github.io/tags/MySQL/</loc>
     <lastmod>2021-01-23</lastmod>
     <changefreq>daily</changefreq>
@@ -117,6 +110,13 @@
   
   <url>
     <loc>http://setobox.github.io/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/</loc>
+    <lastmod>2021-01-23</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://setobox.github.io/tags/%E6%B5%8B%E8%AF%95/</loc>
     <lastmod>2021-01-23</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -146,14 +146,14 @@
   </url>
   
   <url>
-    <loc>http://setobox.github.io/categories/%E6%B5%8B%E8%AF%95/</loc>
+    <loc>http://setobox.github.io/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/</loc>
     <lastmod>2021-01-23</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>http://setobox.github.io/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/</loc>
+    <loc>http://setobox.github.io/categories/%E6%B5%8B%E8%AF%95/</loc>
     <lastmod>2021-01-23</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
