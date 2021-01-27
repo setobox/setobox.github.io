@@ -6,7 +6,7 @@
   <link href="http://setobox.github.io/atom.xml" rel="self"/>
   
   <link href="http://setobox.github.io/"/>
-  <updated>2021-01-22T07:03:10.642Z</updated>
+  <updated>2021-01-27T03:42:48.367Z</updated>
   <id>http://setobox.github.io/</id>
   
   <author>
@@ -20,8 +20,8 @@
     <title>𝓗𝓮𝓵𝓵𝓸 𝓦𝓸𝓻𝓵𝓭！</title>
     <link href="http://setobox.github.io/posts/990c54fb/"/>
     <id>http://setobox.github.io/posts/990c54fb/</id>
-    <published>2021-01-22T07:03:10.642Z</published>
-    <updated>2021-01-22T07:03:10.642Z</updated>
+    <published>2021-01-27T03:42:48.367Z</published>
+    <updated>2021-01-27T03:42:48.367Z</updated>
     
     
     <summary type="html">一篇用于测试的文章</summary>
@@ -36,11 +36,51 @@
   </entry>
   
   <entry>
+    <title>Hexo添加文章时自动打开编辑器</title>
+    <link href="http://setobox.github.io/posts/e7fa2d4f/"/>
+    <id>http://setobox.github.io/posts/e7fa2d4f/</id>
+    <published>2021-01-26T12:10:34.000Z</published>
+    <updated>2021-01-26T12:10:34.000Z</updated>
+    
+    
+    <summary type="html">通过JS脚本监听hexo new，并自动打开md编辑器</summary>
+    
+    
+    
+    <category term="博客优化" scheme="http://setobox.github.io/categories/%E5%8D%9A%E5%AE%A2%E4%BC%98%E5%8C%96/"/>
+    
+    
+    <category term="博客优化" scheme="http://setobox.github.io/tags/%E5%8D%9A%E5%AE%A2%E4%BC%98%E5%8C%96/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>使用Github Action实现全自动部署</title>
+    <link href="http://setobox.github.io/posts/41767f46/"/>
+    <id>http://setobox.github.io/posts/41767f46/</id>
+    <published>2021-01-26T11:49:52.000Z</published>
+    <updated>2021-01-26T11:49:52.000Z</updated>
+    
+    
+    <summary type="html">通过Github Action，将繁琐的部署交给云端</summary>
+    
+    
+    
+    <category term="博客优化" scheme="http://setobox.github.io/categories/%E5%8D%9A%E5%AE%A2%E4%BC%98%E5%8C%96/"/>
+    
+    
+    <category term="博客优化" scheme="http://setobox.github.io/tags/%E5%8D%9A%E5%AE%A2%E4%BC%98%E5%8C%96/"/>
+    
+    <category term="自动部署" scheme="http://setobox.github.io/tags/%E8%87%AA%E5%8A%A8%E9%83%A8%E7%BD%B2/"/>
+    
+  </entry>
+  
+  <entry>
     <title>MySQL基础</title>
     <link href="http://setobox.github.io/posts/bce68613/"/>
     <id>http://setobox.github.io/posts/bce68613/</id>
-    <published>2020-06-05T00:58:44.000Z</published>
-    <updated>2020-06-05T00:58:44.000Z</updated>
+    <published>2020-06-05T08:58:44.000Z</published>
+    <updated>2020-06-05T08:58:44.000Z</updated>
     
     
       
@@ -66,8 +106,8 @@
     <title>MarkDown快速入门</title>
     <link href="http://setobox.github.io/posts/3958530d/"/>
     <id>http://setobox.github.io/posts/3958530d/</id>
-    <published>2020-05-25T04:10:12.000Z</published>
-    <updated>2020-05-25T04:10:12.000Z</updated>
+    <published>2020-05-25T12:10:12.000Z</published>
+    <updated>2020-05-25T12:10:12.000Z</updated>
     
     
       
@@ -93,8 +133,8 @@
     <title>Python图形用户界面(Tkinter)</title>
     <link href="http://setobox.github.io/posts/6c8750a3/"/>
     <id>http://setobox.github.io/posts/6c8750a3/</id>
-    <published>2020-05-25T00:21:26.000Z</published>
-    <updated>2020-05-25T00:21:26.000Z</updated>
+    <published>2020-05-25T08:21:26.000Z</published>
+    <updated>2020-05-25T08:21:26.000Z</updated>
     
     
       

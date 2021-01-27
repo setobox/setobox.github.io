@@ -1,0 +1,306 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>使用Github Action实现全自动部署 | 𝓢𝖊𝖙𝖔𝖇𝖔𝖝</title><meta name="keywords" content="博客优化,自动部署"><meta name="author" content="姬顶盒"><meta name="copyright" content="姬顶盒"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="通过Github Action，将繁琐的部署交给云端">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用Github Action实现全自动部署">
+<meta property="og:url" content="http://setobox.github.io/posts/41767f46/index.html">
+<meta property="og:site_name" content="𝓢𝖊𝖙𝖔𝖇𝖔𝖝">
+<meta property="og:description" content="通过Github Action，将繁琐的部署交给云端">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/setobox/Pic-repo/imgs/20210123181543.jpg">
+<meta property="article:published_time" content="2021-01-26T11:49:52.000Z">
+<meta property="article:modified_time" content="2021-01-26T11:49:52.000Z">
+<meta property="article:author" content="姬顶盒">
+<meta property="article:tag" content="博客优化">
+<meta property="article:tag" content="自动部署">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/setobox/Pic-repo/imgs/20210123181543.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://setobox.github.io/posts/41767f46/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="baidu-site-verification" content="HmmzfiaYNz"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isanchor: false
+};
+
+const saveToLocal = {
+  // ttl 單位是 天
+  set: function setWithExpiry(key, value, ttl) {
+    if (ttl === 0) return
+    const now = new Date()
+    const expiryDay = ttl * 86400000
+    const item = {
+      value: value,
+      expiry: now.getTime() + expiryDay,
+    }
+    localStorage.setItem(key, JSON.stringify(item))
+  },
+
+  get: function getWithExpiry(key) {
+    const itemStr = localStorage.getItem(key)
+
+    if (!itemStr) {
+      return undefined
+    }
+    const item = JSON.parse(itemStr)
+    const now = new Date()
+
+    if (now.getTime() > item.expiry) {
+      localStorage.removeItem(key)
+      return undefined
+    }
+    return item.value
+  }
+}
+
+// https://stackoverflow.com/questions/16839698/jquery-getscript-alternative-in-native-javascript
+const getScript = url => new Promise((resolve, reject) => {
+  const script = document.createElement('script')
+  script.src = url
+  script.async = true
+  script.onerror = reject
+  script.onload = script.onreadystatechange = function() {
+    const loadState = this.readyState
+    if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+    script.onload = script.onreadystatechange = null
+    resolve()
+  }
+  document.head.appendChild(script)
+})</script><script id="config_change">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2021-01-26 11:49:52'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(function () {  window.activateDarkMode = function () {
+    document.documentElement.setAttribute('data-theme', 'dark')
+    if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+    }
+  }
+  window.activateLightMode = function () {
+    document.documentElement.setAttribute('data-theme', 'light')
+   if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+    }
+  }
+  const autoChangeMode = 'false'
+  const t = saveToLocal.get('theme')
+  if (autoChangeMode === '1') {
+    const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+    const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+    const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+    if (t === undefined) {
+      if (isLightMode) activateLightMode()
+      else if (isDarkMode) activateDarkMode()
+      else if (isNotSpecified || hasNoSupport) {
+        const now = new Date()
+        const hour = now.getHours()
+        const isNight = hour <= 6 || hour >= 18
+        isNight ? activateDarkMode() : activateLightMode()
+      }
+      window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+        if (saveToLocal.get('theme') === undefined) {
+          e.matches ? activateDarkMode() : activateLightMode()
+        }
+      })
+    } else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else if (autoChangeMode === '2') {
+    const now = new Date()
+    const hour = now.getHours()
+    const isNight = hour <= 6 || hour >= 18
+    if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+    else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else {
+    if (t === 'dark') activateDarkMode()
+    else if (t === 'light') activateLightMode()
+  }const asideStatus = saveToLocal.get('aside-status')
+if (asideStatus !== undefined) {
+   if (asideStatus === 'hide') {
+     document.documentElement.classList.add('hide-aside')
+   } else {
+     document.documentElement.classList.remove('hide-aside')
+   }
+}})()</script><meta name="generator" content="Hexo 5.3.0"><link rel="alternate" href="/atom.xml" title="𝓢𝖊𝖙𝖔𝖇𝖔𝖝" type="application/atom+xml">
+</head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">加载中...</div></div></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" data-lazy-src="https://cdn.jsdelivr.net/gh/setobox/Pic-repo/imgs/20210122151155.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">6</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">9</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">分类</div><div class="length-num">5</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);" rel="external nofollow noreferrer"><i class="fa-fw fa fa-list"></i><span> 文章</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 时间轴</span></a></li><li><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></li><li><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fa fa-heart"></i><span> 关于</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);" rel="external nofollow noreferrer"><i class="fa-fw fa fa-list"></i><span> 娱乐</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/gallery/"><i class="fa-fw fa fa-image"></i><span> 图库</span></a></li><li><a class="site-page" href="/bangumis/"><i class="fa-fw fa fa-tv"></i><span> 番剧</span></a></li><li><a class="site-page" href="/music/"><i class="fa-fw fa fa-music"></i><span> 音乐</span></a></li><li><a class="site-page" href="/movies/"><i class="fa-fw fa fa-film"></i><span> 视频</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://cdn.jsdelivr.net/gh/setobox/Pic-repo/imgs/20210123181543.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">𝓢𝖊𝖙𝖔𝖇𝖔𝖝</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);" rel="external nofollow noreferrer"><i class="fa-fw fa fa-list"></i><span> 文章</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 时间轴</span></a></li><li><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></li><li><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fa fa-heart"></i><span> 关于</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);" rel="external nofollow noreferrer"><i class="fa-fw fa fa-list"></i><span> 娱乐</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/gallery/"><i class="fa-fw fa fa-image"></i><span> 图库</span></a></li><li><a class="site-page" href="/bangumis/"><i class="fa-fw fa fa-tv"></i><span> 番剧</span></a></li><li><a class="site-page" href="/music/"><i class="fa-fw fa fa-music"></i><span> 音乐</span></a></li><li><a class="site-page" href="/movies/"><i class="fa-fw fa fa-film"></i><span> 视频</span></a></li></ul></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">使用Github Action实现全自动部署</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2021-01-26T11:49:52.000Z" title="发表于 2021-01-26 11:49:52">2021-01-26</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2021-01-26T11:49:52.000Z" title="更新于 2021-01-26 11:49:52">2021-01-26</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%8D%9A%E5%AE%A2%E4%BC%98%E5%8C%96/">博客优化</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><blockquote>
+<p>本文内容参考自<a target="_blank" rel="noopener external nofollow noreferrer" href="https://akilar.top/posts/f752c86d/">akilar</a>, 建议前往原文阅览更详细的教程。</p>
+</blockquote>
+<h1 id="GitHub-Actions-简介"><a href="#GitHub-Actions-简介" class="headerlink" title="GitHub Actions 简介"></a>GitHub Actions 简介</h1><blockquote>
+<p>在 GitHub Actions 的仓库中自动化、自定义和执行软件开发工作流程。 您可以发现、创建和共享操作以执行您喜欢的任何作业（包括 CI/CD），并将操作合并到完全自定义的工作流程中。</p>
+</blockquote>
+<p><code>hexo clean</code> <code>hexo g -d</code></p>
+<p>每次写文后部署Hexo都需要运行这几个指令，文章少还好，文章多起来之后，编译的时间也会随之增加。通过GitHub Action，就可以省略自己输指令部署，将改动推送到远程仓库后，其他的任务交给CI就好。</p>
+<h1 id="所需常量声明"><a href="#所需常量声明" class="headerlink" title="所需常量声明"></a>所需常量声明</h1><table>
+<thead>
+<tr>
+<th>常量名</th>
+<th>常量释义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>[Blogroot]</td>
+<td>本地存放博客源码的文件夹路径</td>
+</tr>
+<tr>
+<td>[SourceRepo]</td>
+<td>存放博客源码的私有仓库名</td>
+</tr>
+<tr>
+<td>[SiteBlogRepo]</td>
+<td>存放编译好的博客页面的公有仓库名<br>Site 指站点，教程中会替换成<br/>Github、Gitee、Coding</td>
+</tr>
+<tr>
+<td>[SiteUsername]</td>
+<td>用户名<br/>Site 指站点，教程中会替换成<br/>Github、Gitee、Coding</td>
+</tr>
+<tr>
+<td>[SiteToken]</td>
+<td>申请到的令牌码<br/>Site 指站点，教程中会替换成<br/>Github、Gitee、Coding</td>
+</tr>
+<tr>
+<td>[GithubEmail]</td>
+<td>与 github 绑定的主邮箱，建议使用 Gmail</td>
+</tr>
+<tr>
+<td>[TokenUser]</td>
+<td>Coding 配置特有的令牌用户名</td>
+</tr>
+</tbody></table>
+<h1 id="GitHub-Action-快速开始"><a href="#GitHub-Action-快速开始" class="headerlink" title="GitHub Action 快速开始"></a>GitHub Action 快速开始</h1><h2 id="获取Token"><a href="#获取Token" class="headerlink" title="获取Token"></a>获取Token</h2><p>为了确保交由 <code>Github Action</code> 来持续部署时，<code>Github Action</code> 具备足够的权限来进行 <code>hexo deploy</code> 操作，需要先获取 <code>Token</code>，博主分别在 <code>Github</code>、<code>Coding</code> 处部署了静态页面，所以也就需要获取这两处的 <code>Token</code>。</p>
+<div class="tabs" id="token1"><ul class="nav-tabs"><li class="tab active"><button type="button" data-href="#token1-1">Github</button></li><li class="tab"><button type="button" data-href="#token1-2">Coding</button></li></ul><div class="tab-contents"><div class="tab-item-content active" id="token1-1"><p>访问 <a target="_blank" rel="noopener external nofollow noreferrer" href="https://github.com/settings/tokens">Github-&gt; 头像（右上角）-&gt;Settings-&gt;Developer Settings-&gt;Personal access tokens</a>-&gt;<br><a target="_blank" rel="noopener external nofollow noreferrer" href="https://github.com/settings/tokens">![Generate new token](https://img.shields.io/badge/-Generate new token-white.svg)</a>，名称随意起，但必须勾选repo项。</p>
+<p><img src= "/img/loading.gif" data-lazy-src="https://cdn.jsdelivr.net/gh/setobox/Pic-repo/imgs/posts/41767f46/20210126225607.png" alt="img1"></p>
+<p><img src= "/img/loading.gif" data-lazy-src="https://cdn.jsdelivr.net/gh/setobox/Pic-repo/imgs/posts/41767f46/20210126225618.png" alt="img2"></p>
+<p><img src= "/img/loading.gif" data-lazy-src="https://cdn.jsdelivr.net/gh/setobox/Pic-repo/imgs/posts/41767f46/20210126225626.png" alt="img3"></p>
+<div class="note warning flat"><p>Token只会显示一次，之后无法查看，请务必记下来，若丢失则只能重新生成Token码重新配置。</p>
+</div><button type="button" class="tab-to-top" aria-label="scroll to top"><i class="fas fa-arrow-up"></i></button></div><div class="tab-item-content" id="token1-2"><p>访问 <a target="_blank" rel="noopener external nofollow noreferrer" href="https://coding.net/">Coding-&gt; 头像（右上角）-&gt; 个人账户设置 -&gt; 访问令牌 -&gt; 新建令牌</a>。</p>
+<p><img src= "/img/loading.gif" data-lazy-src="https://cdn.jsdelivr.net/gh/setobox/Pic-repo/imgs/posts/41767f46/20210126225638.png" alt="img4"></p>
+<p><img src= "/img/loading.gif" data-lazy-src="https://cdn.jsdelivr.net/gh/setobox/Pic-repo/imgs/posts/41767f46/20210126225645.png" alt="img5"></p>
+<p><img src= "/img/loading.gif" data-lazy-src="https://cdn.jsdelivr.net/gh/setobox/Pic-repo/imgs/posts/41767f46/20210126225650.png" alt="img6"></p>
+<div class="note warning flat"><p>Coding还需要配置**令牌用户名[TokenUser]**，同GitHub一样，Token码只会出现一次。</p>
+</div><button type="button" class="tab-to-top" aria-label="scroll to top"><i class="fas fa-arrow-up"></i></button></div></div></div>
+
+<h2 id="创建存放源码的私有仓库"><a href="#创建存放源码的私有仓库" class="headerlink" title="创建存放源码的私有仓库"></a>创建存放源码的私有仓库</h2><p>我们需要创建一个私有仓库[SourceRepo]用来存放Hexo博客源码，创建完成后，需要把源码push到仓库中。首先获取远程仓库地址，此处虽然SSH和HTTPS均可。SSH在绑定过sshkey的设备上无需再输入密码，HTTPS则需要输入密码，但是SSH偶尔会遇到端口占用的情况。请自主选择。</p>
+<div class="note info flat"><p>之所以是私有仓库，是因为配置中会写有Token，别人拿到Token可以随意操作你的github仓库内容。</p>
+</div>
+
+<h2 id="配置deploy项"><a href="#配置deploy项" class="headerlink" title="配置deploy项"></a>配置deploy项</h2><p>打开站点配置文件_config.yml,找到deploy配置项，使用之前生成的Token和各个站点仓库推送地址。</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">deploy:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">git</span></span><br><span class="line">  <span class="attr">repo:</span></span><br><span class="line">    <span class="attr">gitHub:</span> <span class="string">https://[GithubUsername]:[GithubToken]@github.com/[GithubUsername]/[GithubBlogRepo].git</span></span><br><span class="line">    <span class="attr">gitee:</span> <span class="string">https://[GiteeUsername]:[GiteeToken]@gitee.com/[GiteeUsername]/[GiteeBlogRepo].git</span></span><br><span class="line">    <span class="attr">coding:</span> <span class="string">https://[TokenUser]:[CodingToken]@e.coding.net/[CodingUsername]/[CodingBlogRepo].git</span></span><br><span class="line">  <span class="attr">branch:</span> <span class="string">master</span> <span class="comment">#2020年10月后github新建仓库默认分支改为main，注意更改</span></span><br></pre></td></tr></table></figure>
+<h2 id="配置GitHub-Action"><a href="#配置GitHub-Action" class="headerlink" title="配置GitHub Action"></a>配置GitHub Action</h2><p>在Hexo根目录新建 .github 文件夹，注意前面有个.的。然后在.github内新建workflows文件夹，在workflows文件夹内新建autodeploy.yml,在此yml文件内输入</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 当有改动推送到master分支时，启动Action</span></span><br><span class="line"><span class="attr">name:</span> <span class="string">自动部署</span></span><br><span class="line"></span><br><span class="line"><span class="attr">on:</span></span><br><span class="line">  <span class="attr">push:</span></span><br><span class="line">    <span class="attr">branches:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">master</span> <span class="comment">#2020年10月后github新建仓库默认分支改为main，注意更改</span></span><br><span class="line"></span><br><span class="line">  <span class="attr">release:</span></span><br><span class="line">    <span class="attr">types:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">published</span></span><br><span class="line"></span><br><span class="line"><span class="attr">jobs:</span></span><br><span class="line">  <span class="attr">deploy:</span></span><br><span class="line">    <span class="attr">runs-on:</span> <span class="string">ubuntu-latest</span></span><br><span class="line">    <span class="attr">steps:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">检查分支</span></span><br><span class="line">      <span class="attr">uses:</span> <span class="string">actions/checkout@v2</span></span><br><span class="line">      <span class="attr">with:</span></span><br><span class="line">        <span class="attr">ref:</span> <span class="string">master</span> <span class="comment">#2020年10月后github新建仓库默认分支改为main，注意更改</span></span><br><span class="line"></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">安装</span> <span class="string">Node</span></span><br><span class="line">      <span class="attr">uses:</span> <span class="string">actions/setup-node@v1</span></span><br><span class="line">      <span class="attr">with:</span></span><br><span class="line">        <span class="attr">node-version:</span> <span class="string">&quot;12.x&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">安装</span> <span class="string">Hexo</span></span><br><span class="line">      <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line">        <span class="string">export</span> <span class="string">TZ=&#x27;Asia/Shanghai&#x27;</span></span><br><span class="line">        <span class="string">npm</span> <span class="string">install</span> <span class="string">hexo-cli</span> <span class="string">-g</span></span><br><span class="line"></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">缓存</span> <span class="string">Hexo</span></span><br><span class="line">      <span class="attr">uses:</span> <span class="string">actions/cache@v1</span></span><br><span class="line">      <span class="attr">id:</span> <span class="string">cache</span></span><br><span class="line">      <span class="attr">with:</span></span><br><span class="line">        <span class="attr">path:</span> <span class="string">node_modules</span></span><br><span class="line">        <span class="attr">key:</span> <span class="string">$&#123;&#123;runner.OS&#125;&#125;-$&#123;&#123;hashFiles(&#x27;**/package-lock.json&#x27;)&#125;&#125;</span></span><br><span class="line"></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">安装依赖</span></span><br><span class="line">      <span class="attr">if:</span> <span class="string">steps.cache.outputs.cache-hit</span> <span class="type">!=</span> <span class="string">&#x27;true&#x27;</span></span><br><span class="line">      <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line">        <span class="string">npm</span> <span class="string">install</span> <span class="string">--save</span></span><br><span class="line"></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">生成静态文件</span></span><br><span class="line">      <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line">        <span class="string">hexo</span> <span class="string">clean</span></span><br><span class="line">        <span class="string">hexo</span> <span class="string">generate</span></span><br><span class="line"></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">部署</span></span><br><span class="line">      <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line">        <span class="string">git</span> <span class="string">config</span> <span class="string">--global</span> <span class="string">user.name</span> <span class="string">&quot;[GithubUsername]&quot;</span></span><br><span class="line">        <span class="string">git</span> <span class="string">config</span> <span class="string">--global</span> <span class="string">user.email</span> <span class="string">&quot;elpsycongri@qq.com&quot;</span></span><br><span class="line">        <span class="string">git</span> <span class="string">clone</span> <span class="string">https://github.com/[GithubUsername]/[GithubBlogRepo].git</span> <span class="string">.deploy_git</span></span><br><span class="line">        <span class="comment"># 此处务必用HTTPS链接。SSH链接可能有权限报错的隐患</span></span><br><span class="line">        <span class="comment"># =====注意.deploy_git前面有个空格=====</span></span><br><span class="line">        <span class="comment"># 这行指令的目的是clone博客静态文件仓库，防止Hexo推送时覆盖整个静态文件仓库，而是只推送有更改的文件</span></span><br><span class="line">        <span class="string">hexo</span> <span class="string">deploy</span></span><br></pre></td></tr></table></figure>
+<h2 id="重新设置远程仓库和分支"><a href="#重新设置远程仓库和分支" class="headerlink" title="重新设置远程仓库和分支"></a>重新设置远程仓库和分支</h2><h3 id="添加屏蔽项"><a href="#添加屏蔽项" class="headerlink" title="添加屏蔽项"></a>添加屏蔽项</h3><p>能够使用指令进行安装的内容不包括在需要提交的源码内，<br>这样可以显著减少需要提交的文件量和加快提交速度。<br>打开 [Blogroot]/.gitignore, 输入以下内容：</p>
+<figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">.DS_Store</span><br><span class="line">Thumbs.db</span><br><span class="line">db.json</span><br><span class="line">*.log</span><br><span class="line">node_modules/</span><br><span class="line">public/</span><br><span class="line">.deploy*/</span><br><span class="line">.deploy_git*/</span><br><span class="line">.idea</span><br><span class="line">themes/butterfly/.git</span><br></pre></td></tr></table></figure>
+<p>注意：如果不是butterfly主题，最后一行内容需要替换为当前使用的主题</p>
+<h3 id="提交源码到私有仓库-SourceRepo"><a href="#提交源码到私有仓库-SourceRepo" class="headerlink" title="提交源码到私有仓库[SourceRepo]"></a>提交源码到私有仓库[SourceRepo]</h3><p>在博客根目录下启动终端，使用git指令重设仓库地址。这样在新建仓库，我们仍旧可以保留珍贵的 commit history，便于版本回滚。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">git remote rm origin <span class="comment"># 删除原有仓库链接</span></span><br><span class="line">git remote add origin git@github.com:[GithubUsername]/[SourceRepo].git <span class="comment">#[SourceRepo]为新的存放源码的github私有仓库</span></span><br><span class="line">git checkout -b master <span class="comment"># 切换到master分支，</span></span><br><span class="line"><span class="comment">#2020年10月后github新建仓库默认分支改为main，注意更改</span></span><br><span class="line"><span class="comment"># 如果不是，后面的所有设置的分支记得保持一致</span></span><br><span class="line"><span class="comment"># 2020年10月以后，新建仓库的默认分支换成main</span></span><br><span class="line">git add .</span><br><span class="line">git commit -m <span class="string">&quot;github action update&quot;</span></span><br><span class="line">git push origin master</span><br><span class="line"><span class="comment">#2020年10月后github新建仓库默认分支改为main，注意更改</span></span><br></pre></td></tr></table></figure>
+<h3 id="查看部署情况"><a href="#查看部署情况" class="headerlink" title="查看部署情况"></a>查看部署情况</h3><p>打开私有仓库，找到Actions</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined" rel="external nofollow noreferrer">姬顶盒</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://setobox.github.io/posts/41767f46/">http://setobox.github.io/posts/41767f46/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="external nofollow noreferrer" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://setobox.github.io" target="_blank">𝓢𝖊𝖙𝖔𝖇𝖔𝖝</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E5%8D%9A%E5%AE%A2%E4%BC%98%E5%8C%96/">博客优化</a><a class="post-meta__tags" href="/tags/%E8%87%AA%E5%8A%A8%E9%83%A8%E7%BD%B2/">自动部署</a></div><div class="post_share"><div class="social-share" data-image="https://cdn.jsdelivr.net/gh/setobox/Pic-repo/imgs/20210123181543.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/posts/e7fa2d4f/"><img class="prev-cover" data-lazy-src="https://cdn.jsdelivr.net/gh/setobox/Pic-repo/imgs/20210122133555.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Hexo添加文章时自动打开编辑器</div></div></a></div><div class="next-post pull-right"><a href="/posts/bce68613/"><img class="next-cover" data-lazy-src="https://cdn.jsdelivr.net/gh/setobox/Pic-repo/imgs/20210122133626.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">MySQL基础</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span> 相关推荐</span></div><div class="relatedPosts-list"><div><a href="/posts/e7fa2d4f/" title="Hexo添加文章时自动打开编辑器"><img class="cover" data-lazy-src="https://cdn.jsdelivr.net/gh/setobox/Pic-repo/imgs/20210122133555.webp" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-01-26</div><div class="title">Hexo添加文章时自动打开编辑器</div></div></a></div></div></div><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="waline-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="card-info-avatar is-center"><img class="avatar-img" data-lazy-src="https://cdn.jsdelivr.net/gh/setobox/Pic-repo/imgs/20210122151155.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/><div class="author-info__name">姬顶盒</div><div class="author-info__description">兴趣使然而建成的无名小站</div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">6</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">标签</div><div class="length-num">9</div></a></div><div class="card-info-data-item is-center"><a href="/categories/"><div class="headline">分类</div><div class="length-num">5</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener external nofollow noreferrer" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/setobox" rel="external nofollow noreferrer" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:elpsycongri@qq.com" rel="external nofollow noreferrer" target="_blank" title="Email"><i class="fas fa-envelope"></i></a><a class="social-icon" href="/atom.xml" target="_blank" title="RSS"><i class="fas fa-rss"></i></a><a class="social-icon" href="http://wpa.qq.com/msgrd?v=3&amp;uin=1102778969&amp;site=qq&amp;menu=yes" rel="external nofollow noreferrer" target="_blank" title="QQ"><i class="fab fa-qq"></i></a><a class="social-icon" href="https://s.team/p/qkf-jrjh/BQDPQNNM" rel="external nofollow noreferrer" target="_blank" title="Steam好友代码192113765"><i class="fab fa-steam"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>公告</span></div><div class="announcement_content">淦</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#GitHub-Actions-%E7%AE%80%E4%BB%8B"><span class="toc-number">1.</span> <span class="toc-text">GitHub Actions 简介</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%89%80%E9%9C%80%E5%B8%B8%E9%87%8F%E5%A3%B0%E6%98%8E"><span class="toc-number">2.</span> <span class="toc-text">所需常量声明</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#GitHub-Action-%E5%BF%AB%E9%80%9F%E5%BC%80%E5%A7%8B"><span class="toc-number">3.</span> <span class="toc-text">GitHub Action 快速开始</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96Token"><span class="toc-number">3.1.</span> <span class="toc-text">获取Token</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E5%AD%98%E6%94%BE%E6%BA%90%E7%A0%81%E7%9A%84%E7%A7%81%E6%9C%89%E4%BB%93%E5%BA%93"><span class="toc-number">3.2.</span> <span class="toc-text">创建存放源码的私有仓库</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%85%8D%E7%BD%AEdeploy%E9%A1%B9"><span class="toc-number">3.3.</span> <span class="toc-text">配置deploy项</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%85%8D%E7%BD%AEGitHub-Action"><span class="toc-number">3.4.</span> <span class="toc-text">配置GitHub Action</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%87%8D%E6%96%B0%E8%AE%BE%E7%BD%AE%E8%BF%9C%E7%A8%8B%E4%BB%93%E5%BA%93%E5%92%8C%E5%88%86%E6%94%AF"><span class="toc-number">3.5.</span> <span class="toc-text">重新设置远程仓库和分支</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B7%BB%E5%8A%A0%E5%B1%8F%E8%94%BD%E9%A1%B9"><span class="toc-number">3.5.1.</span> <span class="toc-text">添加屏蔽项</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8F%90%E4%BA%A4%E6%BA%90%E7%A0%81%E5%88%B0%E7%A7%81%E6%9C%89%E4%BB%93%E5%BA%93-SourceRepo"><span class="toc-number">3.5.2.</span> <span class="toc-text">提交源码到私有仓库[SourceRepo]</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8B%E9%83%A8%E7%BD%B2%E6%83%85%E5%86%B5"><span class="toc-number">3.5.3.</span> <span class="toc-text">查看部署情况</span></a></li></ol></li></ol></li></ol></div></div></div></div></main><footer id="footer" style="background-image: url('https://cdn.jsdelivr.net/gh/setobox/Pic-repo/imgs/20210123181543.jpg')"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021 By 姬顶盒</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener external nofollow noreferrer" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener external nofollow noreferrer" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload/dist/lazyload.iife.min.js"></script><script>function panguFn () {
+  if (typeof pangu === 'object') pangu.autoSpacingPage()
+  else {
+    getScript('https://cdn.jsdelivr.net/npm/pangu/dist/browser/pangu.min.js')
+      .then(() => {
+        pangu.autoSpacingPage()
+      })
+  }
+}
+
+function panguInit () {
+  if (false){
+    GLOBAL_CONFIG_SITE.isPost && panguFn()
+  } else {
+    panguFn()
+  }
+}
+
+document.addEventListener('DOMContentLoaded', panguInit)</script><script>var preloader = {
+  endLoading: () => {
+    document.body.style.overflow = 'auto';
+    document.getElementById('loading-box').classList.add("loaded")
+  },
+  initLoading: () => {
+    document.body.style.overflow = '';
+    document.getElementById('loading-box').classList.remove("loaded")
+
+  }
+}
+window.addEventListener('load',preloader.endLoading())</script><div class="js-pjax"><script>function loadWaline () {
+  function initWaline () {
+    let initData = {
+      el: '#waline-wrap',
+      serverURL: 'https://imnerd-api-gamma.vercel.app',
+      avatar: 'monsterid',
+      path: location.pathname,
+      emojiCDN: 'https://cdn.jsdelivr.net/gh/HCLonely/valine-face@1.0.1/bilibili_2233/',
+      emojiMaps: {"2233娘_卖萌":"2233娘_卖萌.png","2233娘_吃惊":"2233娘_吃惊.png","2233娘_吐魂":"2233娘_吐魂.png","2233娘_喝水":"2233娘_喝水.png","2233娘_困惑":"2233娘_困惑.png","2233娘_大哭":"2233娘_大哭.png","2233娘_大笑":"2233娘_大笑.png","2233娘_委屈":"2233娘_委屈.png","2233娘_怒":"2233娘_怒.png","2233娘_无言":"2233娘_无言.png","2233娘_汗":"2233娘_汗.png","2233娘_疑问":"2233娘_疑问.png","2233娘_第一":"2233娘_第一.png","2233娘_耶":"2233娘_耶.png","2233娘_郁闷":"2233娘_郁闷.png"},
+    }
+    
+    if (false) {
+      const otherData = false
+      initData = Object.assign(initData, otherData)
+    }
+    
+    const waline = new Waline(initData)
+  }
+
+  if (typeof Waline === 'function') initWaline() 
+  else getScript('https://cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js').then(initWaline)
+}
+
+if ('Waline' === 'Waline' || !false) {
+  if (false) btf.loadComment(document.getElementById('waline-wrap'),loadWaline)
+  else setTimeout(loadWaline, 0)
+} else {
+  function loadOtherComment () {
+    loadWaline()
+  }
+}</script></div><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = false;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
