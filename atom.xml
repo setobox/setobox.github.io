@@ -6,7 +6,7 @@
   <link href="http://setobox.github.io/atom.xml" rel="self"/>
   
   <link href="http://setobox.github.io/"/>
-  <updated>2021-03-23T15:08:39.921Z</updated>
+  <updated>2021-03-24T00:16:12.473Z</updated>
   <id>http://setobox.github.io/</id>
   
   <author>
@@ -20,8 +20,8 @@
     <title>𝓗𝓮𝓵𝓵𝓸 𝓦𝓸𝓻𝓵𝓭！</title>
     <link href="http://setobox.github.io/posts/990c54fb/"/>
     <id>http://setobox.github.io/posts/990c54fb/</id>
-    <published>2021-03-23T15:08:39.921Z</published>
-    <updated>2021-03-23T15:08:39.921Z</updated>
+    <published>2021-03-24T00:16:12.473Z</published>
+    <updated>2021-03-24T00:16:12.473Z</updated>
     
     
     <summary type="html">一篇用于测试的文章</summary>
@@ -32,6 +32,40 @@
     
     
     <category term="测试" scheme="http://setobox.github.io/tags/%E6%B5%8B%E8%AF%95/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>JavaWeb学习笔记</title>
+    <link href="http://setobox.github.io/posts/b29dfb1f/"/>
+    <id>http://setobox.github.io/posts/b29dfb1f/</id>
+    <published>2021-03-22T17:52:44.000Z</published>
+    <updated>2021-03-22T17:52:44.000Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;持续更新中……&lt;/p&gt;
+&lt;h1 id=&quot;Tomcat&quot;&gt;&lt;a href=&quot;#Tomcat&quot; class=&quot;headerlink&quot; title=&quot;Tomcat&quot;&gt;&lt;/a&gt;Tomcat&lt;/h1&gt;&lt;details green&gt;&lt;summary&gt; 维基百科复制来的长篇大论：</summary>
+        
+      
+    
+    
+    
+    <category term="JavaWeb" scheme="http://setobox.github.io/categories/JavaWeb/"/>
+    
+    <category term="工具" scheme="http://setobox.github.io/categories/JavaWeb/%E5%B7%A5%E5%85%B7/"/>
+    
+    
+    <category term="工具" scheme="http://setobox.github.io/tags/%E5%B7%A5%E5%85%B7/"/>
+    
+    <category term="JavaWEb" scheme="http://setobox.github.io/tags/JavaWEb/"/>
+    
+    <category term="IDEA" scheme="http://setobox.github.io/tags/IDEA/"/>
+    
+    <category term="Tomcat" scheme="http://setobox.github.io/tags/Tomcat/"/>
     
   </entry>
   
