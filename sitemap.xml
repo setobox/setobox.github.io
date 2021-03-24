@@ -2,13 +2,6 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>http://setobox.github.io/posts/990c54fb/</loc>
-    
-    <lastmod>2021-03-24</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>http://setobox.github.io/baidu_verify_HmmzfiaYNz.html</loc>
     
     <lastmod>2021-03-24</lastmod>
@@ -16,7 +9,14 @@
   </url>
   
   <url>
-    <loc>http://setobox.github.io/posts/b29dfb1f/</loc>
+    <loc>http://setobox.github.io/posts/990c54fb/</loc>
+    
+    <lastmod>2021-03-24</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://setobox.github.io/posts/b255499c/</loc>
     
     <lastmod>2021-03-22</lastmod>
     
@@ -187,6 +187,13 @@
   
   <url>
     <loc>http://setobox.github.io/tags/Tomcat/</loc>
+    <lastmod>2021-03-24</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://setobox.github.io/tags/Servlet/</loc>
     <lastmod>2021-03-24</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
