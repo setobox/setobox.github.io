@@ -6,7 +6,7 @@
   <link href="http://setobox.github.io/atom.xml" rel="self"/>
   
   <link href="http://setobox.github.io/"/>
-  <updated>2021-03-24T15:19:51.786Z</updated>
+  <updated>2021-03-31T13:33:05.580Z</updated>
   <id>http://setobox.github.io/</id>
   
   <author>
@@ -20,8 +20,8 @@
     <title>𝓗𝓮𝓵𝓵𝓸 𝓦𝓸𝓻𝓵𝓭！</title>
     <link href="http://setobox.github.io/posts/990c54fb/"/>
     <id>http://setobox.github.io/posts/990c54fb/</id>
-    <published>2021-03-24T15:19:51.786Z</published>
-    <updated>2021-03-24T15:19:51.786Z</updated>
+    <published>2021-03-31T13:33:05.580Z</published>
+    <updated>2021-03-31T13:33:05.580Z</updated>
     
     
     <summary type="html">一篇用于测试的文章</summary>
@@ -36,7 +36,7 @@
   </entry>
   
   <entry>
-    <title>JavaWeb中应用配置及部分问题</title>
+    <title>Tomcat和Servlet应用配置及部分问题</title>
     <link href="http://setobox.github.io/posts/b255499c/"/>
     <id>http://setobox.github.io/posts/b255499c/</id>
     <published>2021-03-22T17:52:44.000Z</published>
